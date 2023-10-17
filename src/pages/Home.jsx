@@ -7,13 +7,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Post } from '../components/Post'; 
 import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
-import { fetchPosts } from '../redux/slices/posts';
+import { fetchPosts, fetchTags} from '../redux/slices/posts';
 
 export const Home = () => {
   const dispatch = useDispatch();
   const {posts, tags} = useSelector((state) => state.posts);
 
   const isPostsLoading = posts.status === 'loading';
+  const isTagsLoading = posts.status === 'loading';
 
   useEffect(() => {
     dispatch(fetchPosts());
@@ -30,8 +31,8 @@ export const Home = () => {
         <Grid xs={8} item>
           {(isPostsLoading ? [...Array(5)] : posts.items).map((item, index) => isPostsLoading ? <Post key={index} isLoading={true}/> : (
             <Post
-              id={item?._id}
-              title="Roast the code #1 | Rock Paper Scissors"
+              id={item._id}
+              title={item.title}
               imageUrl="https://res.cloudinary.com/practicaldev/image/fetch/s--UnAfrEG8--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/icohm5g0axh9wjmu4oc3.png"
               user={item.user}
               createdAt={item.createdAt}
@@ -43,7 +44,7 @@ export const Home = () => {
           ))}
         </Grid>
         <Grid xs={4} item>
-          <TagsBlock items={['react', 'typescript', 'notes']} isLoading={false} />
+          <TagsBlock items={tags.items} isLoading={isTagsLoading} />
           <CommentsBlock
             items={[
               {
